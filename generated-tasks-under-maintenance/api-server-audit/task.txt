@@ -1,0 +1,17 @@
+Task: Configure API Server Audit Logging
+
+Context:
+The security team requires audit logging for all API server requests, especially for sensitive operations like creating or deleting Secrets.
+
+Requirements:
+1. Create an audit policy file that logs all requests to Secrets resources
+2. Log requests at Metadata level for most operations
+3. Log requests at RequestResponse level for write operations (create, update, patch, delete) on Secrets
+4. Configure the audit log to write to a file at `/var/log/kubernetes/audit.log`
+
+Note: This requires modifying the kube-apiserver manifest. In exam scenarios, you may need to create the audit policy file and reference it in the API server configuration.
+
+Validation:
+- Verify the audit policy file exists and is properly formatted
+- Confirm the API server is configured with the audit policy
+- Perform a test operation (create a Secret) and verify it appears in the audit log

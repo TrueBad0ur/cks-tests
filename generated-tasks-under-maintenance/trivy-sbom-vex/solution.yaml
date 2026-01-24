@@ -1,0 +1,34 @@
+# Generate SBOM in SPDX format:
+# trivy image --format spdx-json --output sbom.spdx.json myapp:v1.0.0
+
+# Generate SBOM in CycloneDX format:
+# trivy image --format cyclonedx-json --output sbom.cyclonedx.json myapp:v1.0.0
+
+# Generate VEX document:
+# trivy image --vex myapp:v1.0.0 > vex.json
+
+# Scan with VEX filtering:
+# trivy image --vex vex.json myapp:v1.0.0
+
+# Example VEX document structure:
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "vulnerabilities": [
+    {
+      "id": "CVE-2023-XXXXX",
+      "analysis": {
+        "state": "not_affected",
+        "justification": "component_not_present",
+        "detail": "Vulnerable package not used in runtime"
+      }
+    }
+  ]
+}
+
+# View SBOM contents:
+# cat sbom.spdx.json | jq '.packages[] | {name: .name, version: .versionInfo}'
+
+# Combine SBOM and vulnerability scan:
+# trivy image --format spdx-json --output sbom.spdx.json myapp:v1.0.0
+# trivy image --format json --output vulns.json myapp:v1.0.0

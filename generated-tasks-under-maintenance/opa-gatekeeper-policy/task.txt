@@ -1,0 +1,19 @@
+Task: Enforce Policy with OPA Gatekeeper
+
+Context:
+You need to enforce a policy that requires all Pods to have specific labels and resource limits using OPA Gatekeeper.
+
+Requirements:
+1. Verify OPA Gatekeeper is installed in the cluster
+2. Create a ConstraintTemplate that requires:
+   - All Pods must have a label `app` with a non-empty value
+   - All containers must have resource limits defined
+3. Create a Constraint that applies this template to all namespaces
+4. Test the policy by attempting to create a Pod without the required label and verify it is rejected
+5. Create a compliant Pod and verify it is accepted
+
+Validation:
+- Verify Gatekeeper is running
+- Confirm ConstraintTemplate is created
+- Verify Constraint is active and enforced
+- Test policy enforcement with non-compliant and compliant resources

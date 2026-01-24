@@ -1,0 +1,17 @@
+Task: Run Compliance Scan with Kubescape
+
+Context:
+The security team requires a compliance scan of the cluster against CIS Kubernetes Benchmark using kubescape.
+
+Requirements:
+1. Install kubescape if not already available
+2. Run a CIS Kubernetes Benchmark compliance scan on the cluster
+3. Export the scan results to a JSON file named `compliance-scan.json`
+4. Identify any failed controls and their severity
+5. Provide remediation steps for HIGH severity failures
+
+Validation:
+- Verify kubescape scan completes successfully
+- Check the output file contains compliance results
+- Review failed controls and their descriptions
+- Confirm scan covers all required CIS benchmark controls

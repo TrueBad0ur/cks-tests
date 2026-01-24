@@ -1,0 +1,17 @@
+Task: Sign and Verify Container Images with Cosign
+
+Context:
+As part of supply chain security, you need to sign container images using Cosign and configure admission control to verify signatures before allowing deployments.
+
+Requirements:
+1. Generate a Cosign key pair for signing images
+2. Sign the container image `myregistry.io/app:v1.0.0` using the generated key
+3. Push the signed image to the registry
+4. Verify the image signature before deployment
+5. Configure Kyverno ClusterPolicy to enforce signature verification for all images in the `production` namespace
+
+Validation:
+- Verify the image is signed successfully
+- Confirm signature verification passes
+- Attempt to deploy an unsigned image and verify it is blocked
+- Deploy the signed image and confirm it is allowed

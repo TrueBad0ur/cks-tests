@@ -1,0 +1,18 @@
+Task: Protect Node Metadata Service (IMDS)
+
+Context:
+On AWS EKS cluster, you need to prevent pods from accessing the Instance Metadata Service (IMDS) to protect node credentials and metadata.
+
+Requirements:
+1. Identify if the cluster is running on AWS (EKS)
+2. Check current IMDS access configuration
+3. Configure the cluster to disable pod access to IMDS
+4. Verify that pods cannot access IMDS endpoint (169.254.169.254)
+5. For GCP clusters, configure Workload Identity instead of IMDS
+
+Note: Implementation differs by cloud provider. For AWS, use eksctl or modify node configuration. For GCP, configure Workload Identity.
+
+Validation:
+- Verify IMDS access is disabled for pods
+- Test IMDS access from within a pod and confirm it fails
+- Confirm node metadata is protected from pod access

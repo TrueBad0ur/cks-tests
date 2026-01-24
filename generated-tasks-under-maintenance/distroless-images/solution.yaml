@@ -1,0 +1,45 @@
+# Example: Migrating from standard to distroless
+# Standard image:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-standard
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: nginx:latest
+---
+# Distroless equivalent:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-distroless
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: gcr.io/distroless/nginx-debian11:nonroot
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65532
+---
+# Compare image sizes:
+# docker images nginx:latest
+# docker images gcr.io/distroless/nginx-debian11:nonroot
+
+# Scan both images:
+# trivy image nginx:latest
+# trivy image gcr.io/distroless/nginx-debian11:nonroot
+
+# Verify no shell in distroless (should fail):
+# docker run --rm gcr.io/distroless/nginx-debian11:nonroot /bin/sh
+
+# Common distroless images:
+# - gcr.io/distroless/base-debian11
+# - gcr.io/distroless/base-debian11:nonroot
+# - gcr.io/distroless/nginx-debian11:nonroot
+# - gcr.io/distroless/python3-debian11:nonroot
+# - gcr.io/distroless/nodejs18-debian11:nonroot

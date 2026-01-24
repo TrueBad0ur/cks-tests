@@ -1,0 +1,6 @@
+docker.io/library/nginx:alpine
+docker.io/bitnami/nginx
+docker.io/library/nginx:1.13
+docker.io/library/nginx:1.17
+docker.io/library/nginx:1.16
+docker.io/library/nginx:1.14

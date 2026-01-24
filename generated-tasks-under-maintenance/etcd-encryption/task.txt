@@ -1,0 +1,18 @@
+Task: Secure etcd with TLS Certificates
+
+Context:
+The etcd cluster needs to be secured with TLS certificates to encrypt communication between etcd members and the API server.
+
+Requirements:
+1. Verify that etcd is configured to use TLS certificates
+2. Check that client certificate authentication is enabled
+3. Verify the etcd server certificate is valid and not expired
+4. Ensure peer-to-peer communication between etcd members uses TLS
+
+Note: This task involves verifying existing etcd configuration. In exam scenarios, you may need to check certificate files, verify etcd manifest, or update etcd configuration.
+
+Validation:
+- Verify etcd pods are using TLS certificates
+- Check certificate expiration dates
+- Confirm etcd is listening on secure ports (2379 for client, 2380 for peer)
+- Verify no unencrypted etcd endpoints are exposed

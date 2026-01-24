@@ -1,0 +1,18 @@
+Task: Enable Pod-to-Pod Encryption with Cilium
+
+Context:
+The security team requires all pod-to-pod communication to be encrypted using Cilium with IPsec encryption.
+
+Requirements:
+1. Verify Cilium is installed and running in the cluster
+2. Generate a Pre-Shared Key (PSK) for IPsec encryption
+3. Create a Kubernetes Secret containing the PSK in the `kube-system` namespace
+4. Configure Cilium to use IPsec encryption with the generated PSK
+5. Verify that pod-to-pod encryption is enabled and active
+6. Test encrypted communication between pods
+
+Validation:
+- Verify Cilium pods are running
+- Confirm the encryption secret exists
+- Check encryption status using cilium CLI
+- Verify traffic between pods is encrypted

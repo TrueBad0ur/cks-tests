@@ -1,0 +1,29 @@
+# AWS EKS - Check current configuration:
+# aws eks describe-cluster --name <cluster-name> --query 'cluster.identity.oidc.issuer'
+
+# Disable IMDS for pods using eksctl:
+# eksctl create cluster --disable-pod-imds
+
+# Or update existing cluster nodegroup:
+# eksctl create nodegroup --cluster=<cluster-name> --disable-pod-imds
+
+# Verify IMDS is blocked from pod:
+# kubectl run test-pod --image=curlimages/curl --rm -it --restart=Never -- curl http://169.254.169.254/latest/meta-data/
+
+# Alternative: Use iptables on nodes to block IMDS:
+# iptables -A OUTPUT -d 169.254.169.254 -j REJECT
+
+# GCP - Configure Workload Identity:
+# gcloud container clusters update <cluster-name> --workload-pool=<project-id>.svc.id.goog
+
+# Enable Workload Identity on node pool:
+# gcloud container node-pools update <pool-name> --cluster=<cluster-name> --workload-metadata=GKE_METADATA
+
+# Create ServiceAccount with Workload Identity:
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workload-identity-sa
+  namespace: default
+  annotations:
+    iam.gke.io/gcp-service-account: <gcp-service-account>@<project-id>.iam.gserviceaccount.com

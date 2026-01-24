@@ -1,0 +1,17 @@
+Task: Configure Falco for Runtime Security Monitoring
+
+Context:
+You need to deploy Falco to monitor runtime security events in the cluster, specifically detecting shell execution in containers.
+
+Requirements:
+1. Create a FalcoConfig custom resource that monitors for shell execution in containers
+2. Configure Falco to output events to stdout
+3. Create a FalcoRule that detects when a shell is spawned in a container
+4. Deploy Falco using the Falco operator or DaemonSet
+
+Note: This task assumes Falco operator is installed. In exam scenarios, you may need to create FalcoRule custom resources or configure Falco via ConfigMap.
+
+Validation:
+- Verify Falco pods are running
+- Trigger a test event (e.g., exec into a pod and run a shell)
+- Confirm Falco detects and logs the event

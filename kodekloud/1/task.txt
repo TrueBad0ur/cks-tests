@@ -1,0 +1,30 @@
+There are 6 images listed in the diagram on the right. Using Aquasec Trivy (which is already installed on the controlplane node), identify the image that has the least number of critical vulnerabilities and use it to deploy the alpha-xyz deployment.
+Secure this deployment by enforcing the AppArmor profile called custom-nginx.
+Expose this deployment with a ClusterIP type service and make sure that only incomings connections from the pod called middleware is accepted and everything else is rejected.
+Click on each icon to see more details. Once done, click the Check button to test your work.
+
+- Pod called 'external' is already deployed in the 'alpha' namespace. Inspect it but do not alter it in anyway!
+- 'external' pod should NOT be able to connect to 'alpha-svc' on port 80
+
+- Pod called 'middleware' is already deployed in the 'alpha' namespace. Inspect it but do not alter it in anyway!
+
+- Expose the 'alpha-xyz' as a 'ClusterIP' type service called 'alpha-svc'
+- 'alpha-svc' should be exposed on 'port: 80' and 'targetPort: 80'
+
+- Create a deployment called 'alpha-xyz' that uses the image with the least 'CRITICAL' vulnerabilities? (Use the sample YAML file located at '/root/alpha-xyz.yaml' to create the deployment. Please make sure to use the same names and labels specified in this sample YAML file!)
+- Deployment has exactly '1' ready replica
+- 'data-volume' is mounted at '/usr/share/nginx/html' on the pod
+
+- 'alpha-pvc' should be bound to 'alpha-pv'. Delete and Re-create it if necessary.
+
+- A persistentVolume called 'alpha-pv' has already been created. Do not modify it and inspect the parameters used to create it.
+
+- Create a NetworkPolicy called 'restrict-inbound' in the 'alpha' namespace
+- Policy Type = 'Ingress'
+- Inbound access only allowed from the pod called 'middleware' with label 'app=middleware'
+- Inbound access only allowed to TCP port 80 on pods matching the policy
+
+- Move the AppArmor profile '/root/usr.sbin.nginx' to '/etc/apparmor.d/usr.sbin.nginx' on the controlplane node
+- Load the 'AppArmor` profile called 'custom-nginx' and ensure it is enforced.
+
+- Permitted images are: 'docker.io/library/nginx:alpine', 'docker.io/bitnami/nginx', 'docker.io/library/nginx:1.13', 'docker.io/library/nginx:1.17', 'docker.io/library/nginx:1.16'and 'docker.io/library/nginx:1.14'. Use 'trivy' to find the image with the least number of 'CRITICAL' vulnerabilities.

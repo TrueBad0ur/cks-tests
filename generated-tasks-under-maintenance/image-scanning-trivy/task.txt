@@ -1,0 +1,15 @@
+Task: Scan Container Image for Vulnerabilities
+
+Context:
+Before deploying a new application, you need to scan the container image for known vulnerabilities using Trivy.
+
+Requirements:
+1. Use Trivy to scan the image `nginx:1.21.0` for vulnerabilities
+2. Export the scan results to a file named `nginx-scan.json` in JSON format
+3. Identify any HIGH or CRITICAL severity vulnerabilities
+4. If vulnerabilities are found, recommend an alternative image version
+
+Validation:
+- Verify Trivy scan completes successfully
+- Check the output file contains vulnerability information
+- Review the severity levels of identified vulnerabilities

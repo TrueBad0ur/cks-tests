@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: alpha-xyz
+  name: alpha-xyz
+  namespace: alpha
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alpha-xyz
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: alpha-xyz
+    spec:
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: alpha-pvc
+      containers:
+      - image: docker.io/library/nginx:alpine
+        name: nginx
+        securityContext:
+          appArmorProfile:
+            type: Localhost
+            localhostProfile: custom-nginx
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: data-volume

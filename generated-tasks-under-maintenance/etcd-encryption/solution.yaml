@@ -1,0 +1,10 @@
+# Verification commands:
+# kubectl get pods -n kube-system | grep etcd
+# kubectl describe pod <etcd-pod-name> -n kube-system | grep -i cert
+# kubectl exec -it <etcd-pod-name> -n kube-system -- etcdctl --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --cacert=/etc/kubernetes/pki/etcd/ca.crt endpoint health
+
+# Check etcd manifest for TLS configuration:
+# cat /etc/kubernetes/manifests/etcd.yaml | grep -E "(cert|key|cacert|listen-client-urls|listen-peer-urls)"
+
+# Verify certificate expiration:
+# openssl x509 -in /etc/kubernetes/pki/etcd/server.crt -noout -dates

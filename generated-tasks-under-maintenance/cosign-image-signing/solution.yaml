@@ -1,0 +1,44 @@
+# Generate key pair:
+# cosign generate-key-pair
+
+# Sign image:
+# cosign sign --key cosign.key myregistry.io/app:v1.0.0
+
+# Verify signature:
+# cosign verify --key cosign.pub myregistry.io/app:v1.0.0
+
+# Keyless signing (alternative):
+# cosign sign myregistry.io/app:v1.0.0
+
+# Keyless verification:
+# cosign verify myregistry.io/app:v1.0.0 --certificate-identity=user@example.com --certificate-oidc-issuer=https://github.com/login/oauth
+
+---
+# Kyverno ClusterPolicy for signature verification:
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signatures
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: check-image-signature
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces:
+          - production
+    verifyImages:
+    - imageReferences:
+      - "*"
+      attestors:
+      - count: 1
+        entries:
+        - keys:
+            publicKeys: |-
+              -----BEGIN PUBLIC KEY-----
+              <cosign-public-key>
+              -----END PUBLIC KEY-----

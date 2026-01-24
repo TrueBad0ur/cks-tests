@@ -1,0 +1,17 @@
+Task: Generate SBOM and VEX with Trivy
+
+Context:
+You need to generate Software Bill of Materials (SBOM) and Vulnerability Exploitability eXchange (VEX) documents for container images using enhanced Trivy features.
+
+Requirements:
+1. Scan the image `myapp:v1.0.0` and generate an SBOM in SPDX format
+2. Export the SBOM to a file named `sbom.spdx.json`
+3. Generate a VEX document that marks certain vulnerabilities as not exploitable in your environment
+4. Verify the SBOM contains all dependencies and packages
+5. Use the VEX document to filter false positives from vulnerability reports
+
+Validation:
+- Verify SBOM file is generated and contains package information
+- Confirm VEX document is properly formatted
+- Check that VEX filtering works correctly
+- Verify SBOM can be used for supply chain verification

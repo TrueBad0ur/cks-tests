@@ -1,0 +1,31 @@
+# Generate Pre-Shared Key:
+# dd if=/dev/urandom count=20 bs=1 2>/dev/null | xxd -p -c 64
+
+# Create secret with PSK:
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cilium-ipsec-keys
+  namespace: kube-system
+type: Opaque
+stringData:
+  keys: "3 rfc4106(gcm(aes)) $(echo '<generated-key>' | xxd -p -c 32) 128"
+---
+# Verify Cilium installation:
+# kubectl get pods -n kube-system | grep cilium
+
+# Check encryption status:
+# kubectl -n kube-system exec -it ds/cilium -- cilium encrypt status
+
+# Alternative: Use cilium CLI
+# cilium encrypt status
+
+# Configure Cilium via ConfigMap (if needed):
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-config
+  namespace: kube-system
+data:
+  enable-ipsec: "true"
+  ipsec-key-file: "/var/run/secrets/kubernetes.io/serviceaccount/cilium-ipsec-keys"

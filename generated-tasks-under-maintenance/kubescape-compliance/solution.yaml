@@ -1,0 +1,17 @@
+# Install kubescape:
+# curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+
+# Run CIS benchmark scan:
+# kubescape scan framework nsa --format json --output compliance-scan.json
+
+# Alternative: Scan specific framework
+# kubescape scan framework cis --format json --output compliance-scan.json
+
+# View results in table format:
+# kubescape scan framework cis
+
+# Scan specific namespace:
+# kubescape scan framework cis --include-namespaces production
+
+# Fix specific control (example for control C-0001):
+# kubescape scan control C-0001 --format json

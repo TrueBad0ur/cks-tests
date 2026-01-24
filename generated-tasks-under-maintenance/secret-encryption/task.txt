@@ -1,0 +1,17 @@
+Task: Encrypt Secrets at Rest
+
+Context:
+The security team requires that all Secrets in the cluster must be encrypted at rest using a custom encryption key.
+
+Requirements:
+1. Create an encryption configuration file that encrypts Secrets using AES-256-GCM
+2. The encryption key should be stored in a file at `/etc/kubernetes/enc/encryption-config.yaml`
+3. Configure the API server to use this encryption configuration
+4. Verify that new Secrets are encrypted
+
+Note: This task requires API server configuration changes. In a real exam scenario, you may need to modify the kube-apiserver manifest or provide the configuration file path.
+
+Validation:
+- Verify the encryption configuration file exists and is properly formatted
+- Confirm the API server is configured to use the encryption configuration
+- Create a test Secret and verify it is encrypted in etcd

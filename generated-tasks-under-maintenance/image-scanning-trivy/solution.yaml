@@ -1,0 +1,8 @@
+# Trivy scan command:
+# trivy image --format json --output nginx-scan.json nginx:1.21.0
+
+# To view results:
+# cat nginx-scan.json | jq '.Results[] | select(.Vulnerabilities[].Severity == "HIGH" or .Vulnerabilities[].Severity == "CRITICAL")'
+
+# Alternative: Use trivy with severity filter
+# trivy image --severity HIGH,CRITICAL nginx:1.21.0

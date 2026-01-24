@@ -1,0 +1,17 @@
+Task: Implement Network Policy with Default Deny
+
+Context:
+You are working in a Kubernetes cluster with multiple namespaces. The security team has identified that the `production` namespace needs to be isolated from other namespaces.
+
+Requirements:
+1. Create a NetworkPolicy named `default-deny-all` in the `production` namespace
+2. The policy should deny all ingress and egress traffic by default
+3. Allow DNS egress traffic (UDP port 53) to all destinations
+4. Allow ingress traffic on TCP port 8080 only from pods in the `monitoring` namespace
+5. Allow egress traffic to pods in the `database` namespace` on TCP port 5432
+6. Apply the policy to all pods in the `production` namespace
+
+Validation:
+- Verify the policy is created and applied correctly
+- Ensure DNS resolution still works for pods in the namespace
+- Confirm that only specified traffic is allowed

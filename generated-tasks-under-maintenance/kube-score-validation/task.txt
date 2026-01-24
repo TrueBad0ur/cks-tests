@@ -1,0 +1,18 @@
+Task: Validate Kubernetes Manifests with Kube-Score
+
+Context:
+Before deploying application manifests to production, you need to validate them for security best practices using kube-score.
+
+Requirements:
+1. Install kube-score if not already available
+2. Scan the deployment manifest file `app-deployment.yaml` for security issues
+3. Fix any critical security findings related to:
+   - Missing security contexts (runAsNonRoot, readOnlyRootFilesystem)
+   - Missing resource requests and limits
+   - Missing liveness and readiness probes
+4. Re-scan the fixed manifest to verify all critical issues are resolved
+
+Validation:
+- Verify kube-score scan completes successfully
+- Confirm all critical security issues are addressed
+- Ensure the fixed manifest passes kube-score validation

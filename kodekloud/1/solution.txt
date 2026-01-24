@@ -1,0 +1,5 @@
+for i in $(cat images.txt); do echo $i; trivy -q image $i | grep Total; done
+
+apparmor_parser -r /etc/apparmor.d/usr.sbin.nginx
+cat /sys/kernel/security/apparmor/profiles | grep nginx
+aa-enforce /etc/apparmor.d/usr.sbin.nginx

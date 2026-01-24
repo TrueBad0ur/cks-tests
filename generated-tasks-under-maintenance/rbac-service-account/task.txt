@@ -1,0 +1,15 @@
+Task: Configure RBAC for Service Account
+
+Context:
+A service account named `app-sa` in the `web` namespace needs to access ConfigMaps and Secrets, but only in its own namespace.
+
+Requirements:
+1. Create a ServiceAccount named `app-sa` in the `web` namespace
+2. Create a Role that allows `get`, `list`, and `watch` operations on ConfigMaps and Secrets
+3. Create a RoleBinding that binds the ServiceAccount to the Role
+4. Ensure the ServiceAccount cannot access resources in other namespaces
+
+Validation:
+- Verify the ServiceAccount exists
+- Test permissions using `kubectl auth can-i` command
+- Confirm cross-namespace access is denied

@@ -1,0 +1,17 @@
+Task: Use Distroless Container Images
+
+Context:
+To minimize attack surface, you need to migrate from standard base images to distroless images and verify the reduced footprint.
+
+Requirements:
+1. Identify a deployment using a standard base image (e.g., `nginx:latest` or `alpine:latest`)
+2. Replace the base image with a distroless equivalent (e.g., `gcr.io/distroless/nginx-debian11`)
+3. Ensure the application works correctly with the distroless image
+4. Verify the reduced image size and attack surface
+5. Scan both images with Trivy and compare vulnerability counts
+
+Validation:
+- Verify the distroless image is smaller in size
+- Confirm the application functions correctly
+- Compare vulnerability scan results between standard and distroless images
+- Verify no shell or package manager is available in distroless image

@@ -1,0 +1,20 @@
+apiVersion: falco.security.falco.org/v1alpha1
+kind: FalcoRule
+metadata:
+  name: detect-shell-in-container
+spec:
+  rules:
+  - rule: shell_in_container
+    desc: Detect shell execution in container
+    condition: >
+      spawned_process and container
+      and shell_procs and proc.tty != 0
+      and container_entrypoint
+      and not user_expected_shell_in_container_conditions
+    output: >
+      Shell spawned in container (user=%user.name container_id=%container.id
+      container_name=%container.name shell=%proc.name parent=%proc.pname
+      cmdline=%proc.cmdline terminal=%proc.tty container_id=%container.id
+      image=%container.image.repository)
+    priority: WARNING
+    tags: [container, shell, mitre_execution]

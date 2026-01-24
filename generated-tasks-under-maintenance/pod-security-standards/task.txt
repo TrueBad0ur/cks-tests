@@ -1,0 +1,15 @@
+Task: Enforce Pod Security Standards
+
+Context:
+The security team requires that all pods in the `restricted-apps` namespace must comply with the Restricted Pod Security Standard.
+
+Requirements:
+1. Configure the `restricted-apps` namespace to enforce the Restricted Pod Security Standard
+2. Set audit mode for Baseline level violations
+3. Set warn mode for Privileged level violations
+4. Ensure the configuration is applied correctly
+
+Validation:
+- Verify namespace labels are set correctly
+- Attempt to create a pod with privileged settings and confirm it is blocked
+- Verify that compliant pods can be created successfully
