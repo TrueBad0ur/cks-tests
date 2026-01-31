@@ -1,0 +1,14 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: commit-creds
+spec:
+  podSelector:
+    matchLabels:
+      app: tetragon-demo
+  kprobes:
+  - call: "commit_creds"
+    syscall: false
+    args:
+    - index: 0
+      type: "cred"

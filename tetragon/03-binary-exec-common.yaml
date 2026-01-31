@@ -1,0 +1,31 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: binary-exec-common
+spec:
+  podSelector:
+    matchLabels:
+      app: tetragon-demo
+  kprobes:
+  - call: "security_bprm_creds_from_file"
+    syscall: false
+    args:
+    - index: 0
+      type: "nop"
+    - index: 1
+      type: "file"
+    selectors:
+    - matchBinaries:
+      - operator: "In"
+        values:
+        - "/usr/bin/curl"
+        - "/usr/bin/wget"
+        - "/usr/bin/nc"
+        - "/usr/bin/ncat"
+        - "/bin/nc"
+        - "/bin/busybox"
+        - "/bin/cat"
+        - "/bin/ls"
+        - "/bin/sh"
+        - "/bin/bash"
+        - "/usr/bin/env"
