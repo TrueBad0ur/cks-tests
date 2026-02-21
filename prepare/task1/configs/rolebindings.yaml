@@ -1,0 +1,69 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-reader-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: app-reader
+  namespace: default
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-deployer-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: app-deployer
+  namespace: default
+roleRef:
+  kind: Role
+  name: pod-creator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-pod-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: developer
+  namespace: default
+roleRef:
+  kind: Role
+  name: pod-creator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-secret-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: developer
+  namespace: default
+roleRef:
+  kind: Role
+  name: secret-manager
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-admin-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: developer
+  namespace: default
+roleRef:
+  kind: Role
+  name: admin-like
+  apiGroup: rbac.authorization.k8s.io

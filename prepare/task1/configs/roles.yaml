@@ -1,0 +1,39 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: [pods, pods/log]
+  verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-creator
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: [pods]
+  verbs: [create, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secret-manager
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: [secrets]
+  verbs: [get, list, create, update, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: admin-like
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: [pods, services, configmaps, secrets]
+  verbs: [get, list, watch, create, update, delete, patch]
