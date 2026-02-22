@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: warning-pod
+  namespace: web-app
+spec:
+  containers:
+  - name: test
+    image: busybox:latest
+    securityContext:
+      runAsNonRoot: false
+    command: ["sleep", "infinity"]
