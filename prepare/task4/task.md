@@ -30,3 +30,14 @@ Now create an allow policy that permits:
 
 ### Question 4
 Can traffic from development namespace reach production? What would you need to add to allow or block this?
+
+### Question 5
+There's an installation script in `configs/install-kube-bench.sh`. Install kube-bench and run it:
+- Run: `/tmp/kube-bench --config-dir /tmp/cfg run --version 1.34`
+- Which tests passed? Which failed?
+
+### Question 6
+Run check 1.2.16:
+- Run: `/tmp/kube-bench --config-dir /tmp/cfg run --version 1.34 --check 1.2.16`
+This test checks that audit logs are configured.
+Add audit logging to the API server and verify the test passes.

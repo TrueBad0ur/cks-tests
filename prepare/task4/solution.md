@@ -124,3 +124,24 @@ spec:
         matchLabels:
           env: development
 EOF
+
+## Question 5
+Install kube-bench and run it:
+❯ /tmp/kube-bench --config-dir /tmp/cfg run --version 1.34
+...
+== Summary node ==
+1 checks PASS
+11 checks FAIL
+13 checks WARN
+0 checks INFO
+...
+
+## Question 6
+Run check 1.2.16:
+❯ /tmp/kube-bench --config-dir /tmp/cfg run --version 1.34 --check 1.2.16
+[FAIL] 1.2.16 Ensure that the --audit-log-path argument is set (Automated)
+
+Fix: Add to kube-apiserver manifest:
+--audit-log-path=/var/log/kubernetes/audit.log
+
+/tmp/kube-bench --config-dir /tmp/cfg run --version 1.34 --check 1.2.16
