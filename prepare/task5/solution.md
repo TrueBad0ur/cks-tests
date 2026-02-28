@@ -237,3 +237,20 @@ usr-is-merged@37~deb12u1
 util-linux-extra@2.38.1-5+deb12u1
 util-linux@2.38.1-5+deb12u1
 zlib1g@1:1.2.13.dfsg-1
+## Question 5
+Install Cosign and generate a key pair:
+❯ /tmp/cosign generate-key-pair
+
+## Question 6
+Sign an image using Cosign:
+❯ /tmp/cosign sign --key cosign.key --upload=false --output-signature=./image.sig nginx:1.25
+
+## Question 7
+Verify the signature:
+❯ /tmp/cosign verify --key cosign.pub --signature image.sig nginx:1.25
+Verification for index.docker.io/library/nginx:1.25 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - The claims were present in the transparency log
+  - The signatures were integrated into the transparency log when the certificate was valid
+  - The signatures were verified against the specified public key

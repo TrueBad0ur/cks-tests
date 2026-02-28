@@ -28,3 +28,13 @@ Scan the Dockerfile in `configs/Dockerfile` using Trivy config.
 ### Question 4
 Generate an SBOM for `nginx:1.25` in SPDX format.
 - List the packages found in the image.
+
+### Question 5
+Install Cosign using `configs/install-cosign.sh`
+Generate a Cosign key pair.
+
+### Question 6
+Sign an image using Cosign: `/tmp/cosign sign --key cosign.key nginx:1.25`
+
+### Question 7
+Verify the signature: `/tmp/cosign verify --key cosign.pub nginx:1.25`
