@@ -109,3 +109,13 @@ What would you recommend to fix the security issues found?
 
 Delete **developer-admin-binding**, role **admin-like** is too wide
 Best practice will be to create minimum width roles, if we need deploy - keep pod-creator, if need secrets - secret-manager
+
+## Question 5
+Look at the API server configuration in configs/api-server-config.yaml.
+What security-related flags do you see? Which ones are insecure?
+--allow-privileged=true
+
+## Question 6
+What admission plugins are enabled? What would you add or remove?
+--enable-admission-plugins=NodeRestriction
+add PodSecurity, LimitRanger, ResourceQuota

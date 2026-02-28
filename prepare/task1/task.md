@@ -23,3 +23,10 @@ Look at the `developer` ServiceAccount specifically. How many RoleBindings does 
 
 ### Question 4
 What would you recommend to fix the security issues found?
+
+### Question 5
+Look at the API server configuration in `configs/api-server-config.yaml`.
+What security-related flags do you see? Which ones are insecure?
+
+### Question 6
+What admission plugins are enabled? What would you add or remove?
