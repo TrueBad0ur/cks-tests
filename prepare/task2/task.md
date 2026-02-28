@@ -28,3 +28,13 @@ If you wanted the pods to pass `restricted` policy (without changing namespace l
 What commands would you use to:
 - Check which PSS level is enforced in a namespace?
 - List all pods that violate PSS in a namespace?
+
+### Question 6
+There's a custom seccomp profile in `configs/chmod-block.json` that blocks chmod syscalls.
+There's also a pod manifest in `configs/chmod-blocked-pod.yaml` that uses this profile.
+
+To use a custom seccomp profile:
+1. Copy `chmod-block.json` to each node's seccomp directory (e.g., `/var/lib/kubelet/seccomp/`)
+2. Apply the pod from `chmod-blocked-pod.yaml`
+
+What happens when you apply the pod?

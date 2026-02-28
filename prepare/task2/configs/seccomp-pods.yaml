@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-app
+  namespace: web-app
+spec:
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: app
+    image: nginx:latest
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unconfined-app
+  namespace: web-app
+spec:
+  containers:
+  - name: app
+    image: nginx:latest
+    securityContext:
+      seccompProfile:
+        type: Unconfined
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged-app
+  namespace: web-app
+spec:
+  containers:
+  - name: app
+    image: nginx:latest
+    securityContext:
+      privileged: true

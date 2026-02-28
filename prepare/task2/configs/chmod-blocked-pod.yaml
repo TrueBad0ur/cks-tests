@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chmod-blocked
+  namespace: web-app
+spec:
+  securityContext:
+    seccompProfile:
+      type: Localhost
+      localhostProfile: chmod-block.json
+  containers:
+  - name: app
+    image: nginx:latest
+    command: ["sh", "-c", "sleep infinity"]

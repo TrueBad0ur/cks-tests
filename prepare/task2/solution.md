@@ -57,3 +57,18 @@ To check which policy is enabled in enforce mode for namespace I'll do:
 }
 
 To find out violating pods the simplest way is to apply and get the results
+
+## Question 6
+There's a custom seccomp profile in `configs/chmod-block.json` that blocks chmod syscalls.
+There's also a pod manifest in `configs/chmod-blocked-pod.yaml` that uses this profile.
+To use a custom seccomp profile:
+1. Copy `chmod-block.json` to each node's seccomp directory (e.g., `/var/lib/kubelet/seccomp/`)
+2. Apply the pod from `chmod-blocked-pod.yaml`
+What happens when you apply the pod?
+
+❯ k -n web-app exec -it pods/chmod-blocked -- sh
+root@chmod-blocked:/# ls
+bin  boot  dev  docker-entrypoint.d  docker-entrypoint.sh  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var  x
+root@chmod-blocked:/# chmod +x x
+chmod: changing permissions of 'x': Operation not permitted
+root@chmod-blocked:/#
