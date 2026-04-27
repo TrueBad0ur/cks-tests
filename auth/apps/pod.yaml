@@ -1,0 +1,17 @@
+---
+# Pod using ServiceAccount my-app
+# Kubernetes automatically mounts the SA token at /var/run/secrets/kubernetes.io/serviceaccount/
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+  namespace: auth-demo
+spec:
+  serviceAccountName: my-app
+  containers:
+  - name: app
+    image: bitnami/kubectl:latest
+    command: ["sleep", "3600"]
+    # Inside the pod, make API requests using the token:
+    # TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+    # curl -k -H "Authorization: Bearer $TOKEN" https://kubernetes.default/api/v1/namespaces/auth-demo/pods

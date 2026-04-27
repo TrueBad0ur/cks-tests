@@ -1,0 +1,8 @@
+# Intermediate generated files — keys, certs, kubeconfigs
+auth/tmp/
+
+# Any stray kubeconfigs or certs checked out locally
+*.kubeconfig
+*.key
+*.crt
+*.csr
