@@ -1,0 +1,19 @@
+# Changes to /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# --- command flags ---
+# - --audit-policy-file=/etc/kubernetes/audit/policy.yaml
+# - --audit-log-path=/etc/kubernetes/audit/logs/audit.log
+# - --audit-log-maxbackup=1
+# - --audit-log-maxsize=100
+# - --audit-log-maxage=7
+
+# --- volumeMount ---
+# - mountPath: /etc/kubernetes/audit
+#   name: audit
+#   readOnly: false
+
+# --- volume ---
+# - name: audit
+#   hostPath:
+#     path: /etc/kubernetes/audit
+#     type: DirectoryOrCreate

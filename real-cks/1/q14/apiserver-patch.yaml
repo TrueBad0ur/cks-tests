@@ -1,0 +1,15 @@
+# Changes to /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# --- command flag ---
+# - --encryption-provider-config=/etc/kubernetes/etcd/ec.yaml
+
+# --- volumeMount ---
+# - mountPath: /etc/kubernetes/etcd
+#   name: etcd-enc
+#   readOnly: true
+
+# --- volume ---
+# - name: etcd-enc
+#   hostPath:
+#     path: /etc/kubernetes/etcd
+#     type: DirectoryOrCreate

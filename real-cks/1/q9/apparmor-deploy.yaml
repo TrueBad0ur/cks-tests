@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apparmor
+  name: apparmor
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apparmor
+  template:
+    metadata:
+      labels:
+        app: apparmor
+    spec:
+      nodeSelector:
+        security: apparmor
+      containers:
+      - image: nginx:1-alpine
+        name: c1
+        securityContext:
+          appArmorProfile:
+            type: Localhost
+            localhostProfile: very-secure

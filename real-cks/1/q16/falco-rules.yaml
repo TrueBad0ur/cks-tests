@@ -1,0 +1,13 @@
+# /etc/falco/falco_rules.local.yaml
+
+- rule: Custom Rule 1
+  desc: Custom Rule 1
+  condition: container and evt.type in (open, openat) and fd.name startswith /etc/kubernetes
+  output: custom_rule_1 file=%fd.name container=%container.id
+  priority: WARNING
+
+- rule: Custom Rule 2
+  desc: Custom Rule 2
+  condition: syscall.type = kill
+  output: custom_rule_2 event_signal=%evt.arg.sig event_pid=%evt.arg.pid container=%container.id
+  priority: INFO

@@ -1,0 +1,46 @@
+# Triggers Custom Rule 1: reads /etc/kubernetes files from inside a container
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rule1-trigger
+  namespace: default
+spec:
+  containers:
+    - name: reader
+      image: busybox:latest
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            cat /etc/kubernetes/ca.crt 2>/dev/null || true
+            sleep 3
+          done
+      volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: k8s-config
+          readOnly: true
+  volumes:
+    - name: k8s-config
+      hostPath:
+        path: /etc/kubernetes
+        type: Directory
+---
+# Triggers Custom Rule 2: sends kill signals in a loop
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rule2-trigger
+  namespace: default
+spec:
+  containers:
+    - name: signal-sender
+      image: busybox:latest
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            kill -0 1 2>/dev/null || true
+            sleep 3
+          done

@@ -1,0 +1,41 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: default
+  namespace: metadata-access
+spec:
+  endpointSelector:
+    matchLabels: {}
+
+  egress:
+  # Allow egress to all external IPs
+  - toCIDR:
+      - 0.0.0.0/0
+
+  # Allow egress to endpoints in the same namespace
+  - toEndpoints:
+      - {}
+
+  # Allow egress to endpoints in kube-system (DNS etc.)
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+
+  egressDeny:
+  # On orifinal: metadata server is an external host → toCIDR works
+  # - toCIDR:
+  #     - 192.168.100.21/32
+  #   toPorts:
+  #     - ports:
+  #         - port: "9055"
+  #           protocol: TCP
+
+  # In local cluster: metadata-server is a pod → toCIDR does not match ClusterIP/PodIP
+  # Cilium uses identity-based model for cluster-internal traffic — use toEndpoints
+  - toEndpoints:
+      - matchLabels:
+          app: metadata-server
+    toPorts:
+      - ports:
+          - port: "9055"
+            protocol: TCP

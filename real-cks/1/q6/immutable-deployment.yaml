@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: team-purple
+  name: immutable-deployment
+  labels:
+    app: immutable-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immutable-deployment
+  template:
+    metadata:
+      labels:
+        app: immutable-deployment
+    spec:
+      containers:
+      - image: busybox:1
+        command: ['sh', '-c', 'tail -f /dev/null']
+        imagePullPolicy: IfNotPresent
+        name: busybox
+        securityContext:
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: temp-vol
+      volumes:
+      - name: temp-vol
+        emptyDir: {}
+      restartPolicy: Always

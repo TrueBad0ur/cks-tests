@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-white
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-policy-webhook
+  namespace: team-white
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-policy-webhook
+  template:
+    metadata:
+      labels:
+        app: image-policy-webhook
+    spec:
+      containers:
+        - name: webhook
+          image: docker.io/truebad0ur/image-policy-webhook:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: BLOCKED_PATTERNS
+              value: "danger,malware,untrusted"
+          # Uncomment to enable TLS (mount a Secret with tls.crt/tls.key):
+          # - name: TLS_CERT
+          #   value: /tls/tls.crt
+          # - name: TLS_KEY
+          #   value: /tls/tls.key
+          # volumeMounts:
+          #   - mountPath: /tls
+          #     name: tls
+          #     readOnly: true
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+      # volumes:
+      #   - name: tls
+      #     secret:
+      #       secretName: webhook-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-policy-webhook
+  namespace: team-white
+spec:
+  selector:
+    app: image-policy-webhook
+  ports:
+    - port: 8080
+      targetPort: 8080

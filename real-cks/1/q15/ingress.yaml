@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: secure
+  namespace: team-pink
+spec:
+  ingressClassName: nginx
+  # TLS is added in step 2 — see README
+  rules:
+    - host: secure-ingress.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-backend
+                port:
+                  number: 80
