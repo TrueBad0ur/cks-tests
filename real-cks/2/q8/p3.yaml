@@ -1,0 +1,16 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p3
+  namespace: team-iris
+spec:
+  # Layer 3: mutual authentication for outgoing traffic from type=database to type=messenger
+  endpointSelector:
+    matchLabels:
+      type: database
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            type: messenger
+      authentication:
+        mode: "required"

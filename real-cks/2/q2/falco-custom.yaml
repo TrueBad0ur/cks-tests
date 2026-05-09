@@ -1,0 +1,28 @@
+# /etc/falco/rules.d/falco_custom.yaml
+# Drop this file on the worker node at that path.
+# Restart Falco after: sudo systemctl restart falco
+
+- rule: Detect passwd file modification
+  desc: Alert when /etc/passwd is modified inside a container
+  condition: >
+    container and
+    (evt.type in (open, openat, openat2)) and
+    evt.arg.flags contains O_WRONLY and
+    fd.name = /etc/passwd
+  output: >
+    passwd modified (time=%evt.time container_id=%container.id
+    container_name=%container.name image=%container.image.repository
+    user=%user.name cmd=%proc.cmdline)
+  priority: WARNING
+  tags: [filesystem, custom]
+
+- rule: Package management process launched
+  desc: Alert when a package manager is launched inside a container (nginx image)
+  condition: >
+    container and
+    proc.name in (apt, apt-get, apk, pip, pip3, npm, yarn, gem)
+  output: >
+    Package management process launched
+    %evt.time.s %container.id %container.name %user.name
+  priority: WARNING
+  tags: [process, custom]

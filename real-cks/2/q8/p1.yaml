@@ -1,0 +1,14 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p1
+  namespace: team-iris
+spec:
+  # Layer 3: deny outgoing from type=messenger to Pods behind Service "database"
+  endpointSelector:
+    matchLabels:
+      type: messenger
+  egressDeny:
+    - toEndpoints:
+        - matchLabels:
+            type: database

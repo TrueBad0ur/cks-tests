@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-private
+  namespace: team-ivy-private
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-private
+  template:
+    metadata:
+      labels:
+        app: api-private
+    spec:
+      containers:
+        - name: api
+          image: nginx:alpine
+          ports:
+            - containerPort: 3000
+            - containerPort: 4000
+            - containerPort: 5000
+          command:
+            - sh
+            - -c
+            - |
+              # Listen on all three ports
+              nginx -g "daemon off;" &
+              while true; do
+                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK" | nc -l -p 3000 &
+                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK" | nc -l -p 4000 &
+                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK" | nc -l -p 5000 &
+                sleep 5
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-private
+  namespace: team-ivy-private
+spec:
+  selector:
+    app: api-private
+  ports:
+    - name: port-3000
+      port: 3000
+      targetPort: 3000
+    - name: port-4000
+      port: 4000
+      targetPort: 4000
+    - name: port-5000
+      port: 5000
+      targetPort: 5000
+---
+# Existing NetworkPolicy in team-ivy-private — do not modify
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-private-ingress
+  namespace: team-ivy-private
+spec:
+  podSelector:
+    matchLabels:
+      app: api-private
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: team-ivy-gateway
+          podSelector:
+            matchLabels:
+              app: gateway-v1
+      ports:
+        - port: 3000
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: team-ivy-gateway
+          podSelector:
+            matchLabels:
+              app: gateway-v2
+      ports:
+        - port: 4000
+        - port: 5000

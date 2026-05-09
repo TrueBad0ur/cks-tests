@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gateway-v1-egress
+  namespace: team-ivy-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app: gateway-v1
+  policyTypes:
+    - Egress
+  egress:
+    # DNS — required for service name resolution
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Only to team-ivy-private on port 3000
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: team-ivy-private
+          podSelector:
+            matchLabels:
+              app: api-private
+      ports:
+        - port: 3000
+          protocol: TCP

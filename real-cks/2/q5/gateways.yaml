@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-v1
+  namespace: team-ivy-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-v1
+  template:
+    metadata:
+      labels:
+        app: gateway-v1
+    spec:
+      containers:
+        - name: curl
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "=== gateway-v1 ==="
+                echo -n "[api-private:3000] "
+                curl -s --max-time 3 http://api-private.team-ivy-private.svc.cluster.local:3000 && echo OK || echo FAIL
+                echo -n "[api-private:4000] "
+                curl -s --max-time 3 http://api-private.team-ivy-private.svc.cluster.local:4000 && echo OK || echo FAIL
+                sleep 5
+              done
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-v2
+  namespace: team-ivy-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-v2
+  template:
+    metadata:
+      labels:
+        app: gateway-v2
+    spec:
+      containers:
+        - name: curl
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "=== gateway-v2 ==="
+                echo -n "[api-private:4000] "
+                curl -s --max-time 3 http://api-private.team-ivy-private.svc.cluster.local:4000 && echo OK || echo FAIL
+                echo -n "[api-private:5000] "
+                curl -s --max-time 3 http://api-private.team-ivy-private.svc.cluster.local:5000 && echo OK || echo FAIL
+                echo -n "[api-private:3000 - should fail] "
+                curl -s --max-time 3 http://api-private.team-ivy-private.svc.cluster.local:3000 && echo OK || echo FAIL
+                sleep 5
+              done

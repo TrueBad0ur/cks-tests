@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-host-hacker
+  namespace: team-rose
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: container-host-hacker
+  template:
+    metadata:
+      labels:
+        app: container-host-hacker
+    spec:
+      containers:
+        - name: hacker
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                ls /run/containerd/containerd.sock 2>/dev/null && echo "socket found"
+                sleep 10
+              done
+          volumeMounts:
+            - mountPath: /run/containerd
+              name: containerd-socket
+      volumes:
+        - name: containerd-socket
+          hostPath:
+            path: /run/containerd
+            type: Directory

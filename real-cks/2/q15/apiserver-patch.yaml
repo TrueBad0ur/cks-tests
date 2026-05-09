@@ -1,0 +1,13 @@
+# Patch for /etc/kubernetes/manifests/kube-apiserver.yaml
+# Add to the command section:
+
+# - --tls-min-version=VersionTLS13
+
+# After editing, wait for the apiserver pod to restart:
+#   watch crictl ps | grep apiserver
+
+# Then test TLS 1.2 is rejected:
+#   curl --tls-max 1.2 --tlsv1.2 https://127.0.0.1:6443 \
+#     --cacert /etc/kubernetes/pki/ca.crt 2>&1
+#
+# Save output to /opt/course/15/curl.log

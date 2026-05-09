@@ -1,0 +1,20 @@
+# Template for creating a CertificateSigningRequest from new.csr
+# Fill in NAME (CN from the CSR) and REQUEST (base64-encoded CSR content)
+#
+# Get NAME:
+#   openssl req -in /opt/course/9/new.csr -noout -subject | grep -oP 'CN\s*=\s*\K[^,]+'
+#
+# Get REQUEST:
+#   cat /opt/course/9/new.csr | base64 | tr -d "\n"
+
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: REPLACE_WITH_CN
+spec:
+  groups:
+    - system:authenticated
+  request: REPLACE_WITH_BASE64_CSR
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+    - client auth

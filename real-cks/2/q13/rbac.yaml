@@ -1,0 +1,63 @@
+# RBAC for cert-signer operator in team-lilac
+# Check actual logs first to determine what permissions are missing:
+#   kubectl -n team-lilac logs cert-signer-0
+#   kubectl -n team-lilac logs --previous cert-signer-0
+
+---
+# Namespace-scoped: read ConfigMaps in team-lilac
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cert-signer-role
+  namespace: team-lilac
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cert-signer-rolebinding
+  namespace: team-lilac
+subjects:
+  - kind: ServiceAccount
+    name: cert-signer
+    namespace: team-lilac
+roleRef:
+  kind: Role
+  name: cert-signer-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Cluster-scoped: list and approve CertificateSigningRequests
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-signer-clusterrole
+rules:
+  - apiGroups: ["certificates.k8s.io"]
+    resources: ["certificatesigningrequests"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["certificates.k8s.io"]
+    resources: ["certificatesigningrequests/approval"]
+    verbs: ["update", "patch"]
+  - apiGroups: ["certificates.k8s.io"]
+    resources: ["signers"]
+    resourceNames: ["kubernetes.io/kube-apiserver-client"]
+    verbs: ["approve"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-signer-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: cert-signer
+    namespace: team-lilac
+roleRef:
+  kind: ClusterRole
+  name: cert-signer-clusterrole
+  apiGroup: rbac.authorization.k8s.io

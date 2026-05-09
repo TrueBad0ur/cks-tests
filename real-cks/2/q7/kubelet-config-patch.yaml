@@ -1,0 +1,24 @@
+# Patch to apply to the kubelet-config ConfigMap in kube-system.
+# This ensures new nodes joining the cluster get these settings via kubeadm.
+#
+# Apply with:
+#   kubectl -n kube-system edit configmap kubelet-config
+# or:
+#   kubectl -n kube-system get configmap kubelet-config -o yaml > /tmp/kubelet-config.yaml
+#   # edit, then:
+#   kubectl apply -f /tmp/kubelet-config.yaml
+#
+# Add these fields to the kubelet: | section:
+#   containerLogMaxSize: 5Mi
+#   containerLogMaxFiles: 3
+
+# After updating the ConfigMap, download and apply on each node:
+#
+# On control-plane (cks9640):
+#   sudo kubeadm upgrade node phase kubelet-config
+#   sudo systemctl restart kubelet
+#
+# On worker (cks9640-node1):
+#   ssh cks9640-node1
+#   sudo kubeadm upgrade node phase kubelet-config
+#   sudo systemctl restart kubelet

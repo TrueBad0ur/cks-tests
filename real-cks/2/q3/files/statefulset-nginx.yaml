@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx
+  namespace: team-green
+spec:
+  serviceName: nginx
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25
+          # BAD: password hardcoded directly in env value (not from Secret)
+          env:
+            - name: ADMIN_PASSWORD
+              value: "superSecretPassword123"
+            - name: DB_PASSWORD
+              value: "mysql-root-pass-456"
+          ports:
+            - containerPort: 80

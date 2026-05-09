@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-signer
+  namespace: team-lilac
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cert-signer-config
+  namespace: team-lilac
+data:
+  config.yaml: |
+    signerName: kubernetes.io/kube-apiserver-client
+    watchInterval: 10s
+---
+# Simulated cert-signer operator: lists CSRs and tries to approve them,
+# reads its own ConfigMap — fails without proper RBAC
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cert-signer
+  namespace: team-lilac
+spec:
+  serviceName: cert-signer
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cert-signer
+  template:
+    metadata:
+      labels:
+        app: cert-signer
+    spec:
+      serviceAccountName: cert-signer
+      containers:
+        - name: operator
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "--- Reading config ---"
+                kubectl -n team-lilac get configmap cert-signer-config -o yaml || { echo "ERROR: cannot read configmap"; sleep 5; exit 1; }
+
+                echo "--- Listing CSRs ---"
+                kubectl get certificatesigningrequests || { echo "ERROR: cannot list CSRs"; sleep 5; exit 1; }
+
+                echo "--- Approving pending CSRs ---"
+                for csr in $(kubectl get csr -o jsonpath='{.items[?(@.status.conditions[0].type!="Approved")].metadata.name}' 2>/dev/null); do
+                  kubectl certificate approve "$csr" || echo "ERROR: cannot approve $csr"
+                done
+
+                echo "--- Loop done, sleeping ---"
+                sleep 15
+              done

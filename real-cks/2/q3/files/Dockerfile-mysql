@@ -1,0 +1,9 @@
+FROM mysql:8.0
+
+# BAD: copies a secrets file into the image — stays in the layer even after deletion
+COPY ./mysql-credentials.secret /root/mysql-credentials.secret
+RUN mysql_setup.sh && rm /root/mysql-credentials.secret
+
+ENV MYSQL_ROOT_PASSWORD=""
+EXPOSE 3306
+CMD ["mysqld"]

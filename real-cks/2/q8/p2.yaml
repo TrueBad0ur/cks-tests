@@ -1,0 +1,20 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p2
+  namespace: team-iris
+spec:
+  # Layer 4: deny outgoing ICMP from Deployment "transmitter" to Pods behind Service "database"
+  endpointSelector:
+    matchLabels:
+      type: transmitter
+  egressDeny:
+    - toEndpoints:
+        - matchLabels:
+            type: database
+      icmps:
+        - fields:
+            - type: 8       # ICMP echo request (ping)
+              family: IPv4
+            - type: 128     # ICMPv6 echo request
+              family: IPv6
