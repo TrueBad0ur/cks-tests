@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: np-11-a
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: np-11-b
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: np-11-outside
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-a
+  namespace: np-11-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-a
+  template:
+    metadata:
+      labels:
+        app: service-a
+    spec:
+      containers:
+        - name: app
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /tmp/www && echo "service-a" > /tmp/www/index.html
+              busybox httpd -f -p 80 -h /tmp/www &
+              while true; do
+                echo -n "[a->b:80]        "
+                wget -q -O- --timeout=3 http://service-b.np-11-b.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                echo -n "[a->outsider:80] "
+                wget -q -O- --timeout=3 http://outsider.np-11-outside.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                sleep 4
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-a
+  namespace: np-11-a
+spec:
+  selector:
+    app: service-a
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-b
+  namespace: np-11-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-b
+  template:
+    metadata:
+      labels:
+        app: service-b
+    spec:
+      containers:
+        - name: app
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /tmp/www && echo "service-b" > /tmp/www/index.html
+              busybox httpd -f -p 80 -h /tmp/www &
+              while true; do
+                echo -n "[b->a:80]        "
+                wget -q -O- --timeout=3 http://service-a.np-11-a.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                echo -n "[b->outsider:80] "
+                wget -q -O- --timeout=3 http://outsider.np-11-outside.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                sleep 4
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-b
+  namespace: np-11-b
+spec:
+  selector:
+    app: service-b
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outsider
+  namespace: np-11-outside
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outsider
+  template:
+    metadata:
+      labels:
+        app: outsider
+    spec:
+      containers:
+        - name: curl
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo -n "[outsider->a:80] "
+                curl -s --max-time 3 http://service-a.np-11-a.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                echo -n "[outsider->b:80] "
+                curl -s --max-time 3 http://service-b.np-11-b.svc.cluster.local && echo "OK" || echo "FAIL/TIMEOUT"
+                sleep 4
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outsider
+  namespace: np-11-outside
+spec:
+  selector:
+    app: outsider
+  ports:
+    - port: 80
+      targetPort: 80

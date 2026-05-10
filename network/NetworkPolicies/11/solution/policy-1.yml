@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-11-1
+  namespace: np-11-a
+spec:
+  podSelector:
+    matchLabels:
+      app: service-a
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: np-11-b
+      podSelector:
+        matchLabels:
+          app: service-b
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: np-11-b
+      podSelector:
+        matchLabels:
+          app: service-b
+  - ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53

@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-9-1
+  namespace: np-9
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress

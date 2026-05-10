@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-11-3
+  namespace: np-11-outside
+spec:
+  podSelector:
+    matchLabels:
+      app: outsider
+  policyTypes:
+  - Ingress
+  - Egress

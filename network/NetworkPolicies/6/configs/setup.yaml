@@ -31,11 +31,9 @@ spec:
             - sh
             - -c
             - |
-              while true; do
-                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\n8080" | nc -l -p 8080 &
-                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\n9090" | nc -l -p 9090 &
-                sleep 2
-              done
+              mkdir -p /tmp/www && echo "api" > /tmp/www/index.html
+              busybox httpd -f -p 8080 -h /tmp/www &
+              busybox httpd -f -p 9090 -h /tmp/www
           ports:
             - containerPort: 8080
             - containerPort: 9090

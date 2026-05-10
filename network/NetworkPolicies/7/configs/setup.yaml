@@ -69,9 +69,8 @@ spec:
             - sh
             - -c
             - |
-              while true; do
-                echo -e "HTTP/1.1 200 OK\r\nContent-Length: 8\r\n\r\nconsumer" | nc -l -p 9090
-              done
+              mkdir -p /tmp/www && echo "consumer" > /tmp/www/index.html
+              busybox httpd -f -p 9090 -h /tmp/www
           ports:
             - containerPort: 9090
 ---

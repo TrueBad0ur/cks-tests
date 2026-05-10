@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-10-3
+  namespace: np-10-app
+spec:
+  podSelector:
+    matchLabels:
+      app: app
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: np-10-internal
+      podSelector:
+        matchLabels:
+          role: trusted
+    ports:
+    - protocol: TCP
+      port: 9090
+
+  - ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53

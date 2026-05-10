@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: np-9
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: np-9
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: curl
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo -n "[web->api:80]   "
+                curl -s --max-time 3 http://api.np-9.svc.cluster.local:80 && echo "OK" || echo "FAIL/TIMEOUT"
+                echo -n "[web->db:5432]  "
+                curl -s --max-time 3 http://db.np-9.svc.cluster.local:5432 && echo "OK" || echo "FAIL/TIMEOUT"
+                sleep 4
+              done
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: np-9
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: app
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /tmp/www && echo "api" > /tmp/www/index.html
+              busybox httpd -f -p 80 -h /tmp/www &
+              while true; do
+                echo -n "[api->db:5432]  "
+                wget -q -O- --timeout=3 http://db.np-9.svc.cluster.local:5432 && echo "OK" || echo "FAIL/TIMEOUT"
+                sleep 4
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: np-9
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: np-9
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: server
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /tmp/www && echo "db" > /tmp/www/index.html
+              busybox httpd -f -p 5432 -h /tmp/www
+          ports:
+            - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: np-9
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 5432
+      targetPort: 5432

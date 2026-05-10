@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-10-2
+  namespace: np-10-internal
+spec:
+  podSelector:
+    matchLabels:
+      role: blocked
+  policyTypes:
+  - Egress
