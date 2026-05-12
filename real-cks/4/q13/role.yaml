@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cert-signer-configmap
+  namespace: team-lilac
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  # list: for "kubectl get configmap" (lists all configmaps)
+  # get:  for "kubectl get configmap cert-signer-lock" (get specific configmap)
+  verbs: ["list", "get"]

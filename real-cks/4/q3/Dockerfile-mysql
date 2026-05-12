@@ -1,0 +1,18 @@
+FROM mysql:8.0
+
+# SECURITY ISSUE: secret-token is COPYed into the image as a layer.
+# Even though it is deleted in a subsequent RUN, Docker creates a new layer per instruction.
+# The COPY layer permanently stores the file in the image history.
+# Anyone who pulls the image can extract the token from the earlier layer.
+COPY ./secret-token /secret-token
+RUN mysql_config_editor set \
+      --login-path=local \
+      --host=localhost \
+      --user=root \
+      --password="$(cat /secret-token)" \
+  && rm -f /secret-token
+
+ENV MYSQL_DATABASE=appdb
+
+EXPOSE 3306
+CMD ["mysqld"]

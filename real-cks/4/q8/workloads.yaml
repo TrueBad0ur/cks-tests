@@ -1,0 +1,84 @@
+---
+# StatefulSet: database (label: type=database)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+  namespace: team-iris
+spec:
+  serviceName: database
+  replicas: 1
+  selector:
+    matchLabels:
+      type: database
+  template:
+    metadata:
+      labels:
+        type: database
+    spec:
+      containers:
+      - name: database
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+
+---
+# Service for database StatefulSet
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: team-iris
+spec:
+  selector:
+    type: database
+  ports:
+  - port: 80
+    targetPort: 80
+  clusterIP: None
+
+---
+# Deployment: messenger (label: type=messenger), 2 replicas
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger
+  namespace: team-iris
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: messenger
+  template:
+    metadata:
+      labels:
+        type: messenger
+    spec:
+      containers:
+      - name: messenger
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+
+---
+# Deployment: transmitter (label: type=transmitter), 2 replicas
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmitter
+  namespace: team-iris
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: transmitter
+  template:
+    metadata:
+      labels:
+        type: transmitter
+    spec:
+      containers:
+      - name: transmitter
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80

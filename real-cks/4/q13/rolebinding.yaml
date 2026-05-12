@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cert-signer-configmap
+  namespace: team-lilac
+subjects:
+- kind: ServiceAccount
+  name: cert-signer
+  namespace: team-lilac
+roleRef:
+  kind: Role
+  name: cert-signer-configmap
+  apiGroup: rbac.authorization.k8s.io

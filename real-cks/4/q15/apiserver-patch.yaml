@@ -1,0 +1,31 @@
+# Q15 | Apiserver TLS Settings
+# Add --tls-min-version=VersionTLS13 to /etc/kubernetes/manifests/kube-apiserver.yaml
+#
+# Find the command section and add the flag alongside the other --tls-* flags.
+# Example location in the manifest:
+
+# spec:
+#   containers:
+#   - command:
+#     - kube-apiserver
+#     - --advertise-address=...
+#     - --allow-privileged=true
+#     ...
+#     - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
+#     - --tls-min-version=VersionTLS13      # <-- ADD THIS LINE
+#     - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
+
+# Valid values for --tls-min-version:
+#   VersionTLS10
+#   VersionTLS11
+#   VersionTLS12
+#   VersionTLS13  (most secure — rejects TLS 1.0, 1.1, 1.2)
+
+# After adding the flag, wait for apiserver to restart:
+#   watch crictl ps
+
+# Then verify TLS 1.2 is rejected:
+#   mkdir -p /opt/course/15
+#   curl --tls-max 1.2 --tlsv1.2 https://127.0.0.1:6443 2>&1 > /opt/course/15/curl.log
+#   cat /opt/course/15/curl.log
+#   # Expected: curl: (35) OpenSSL SSL routines: tlsv1 alert protocol version

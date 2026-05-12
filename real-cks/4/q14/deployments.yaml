@@ -1,0 +1,85 @@
+---
+# collector1: 2 replicas — THIS is the deployment that uses the kill() syscall
+# strace will show: kill(666, SIGTERM)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector1
+  namespace: team-tulip
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: collector1
+  template:
+    metadata:
+      labels:
+        app: collector1
+    spec:
+      containers:
+      - name: collector1
+        image: alpine:3.18
+        command: ["sh", "-c"]
+        args:
+        - |
+          while true; do
+            # Simulates sending SIGTERM to PID 666 — uses the kill() syscall
+            kill -15 666 2>/dev/null || true
+            sleep 5
+          done
+
+---
+# collector2: 1 replica — uses basic file I/O, no kill syscall
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector2
+  namespace: team-tulip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collector2
+  template:
+    metadata:
+      labels:
+        app: collector2
+    spec:
+      containers:
+      - name: collector2
+        image: alpine:3.18
+        command: ["sh", "-c"]
+        args:
+        - |
+          while true; do
+            echo "collecting metrics" >> /tmp/metrics.log
+            sleep 10
+          done
+
+---
+# collector3: 2 replicas — uses network calls, no kill syscall
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector3
+  namespace: team-tulip
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: collector3
+  template:
+    metadata:
+      labels:
+        app: collector3
+    spec:
+      containers:
+      - name: collector3
+        image: alpine:3.18
+        command: ["sh", "-c"]
+        args:
+        - |
+          while true; do
+            cat /proc/uptime >> /tmp/uptime.log
+            sleep 10
+          done

@@ -1,0 +1,24 @@
+# /etc/falco/rules.d/falco_custom.yaml
+# Custom Falco rules — updated output for "Package management process launched"
+
+- rule: Write below etc
+  desc: An attempt to write to /etc directory
+  condition: >
+    (open_write or rename or mkdir or remove) and
+    container and
+    fd.name startswith /etc
+  output: >
+    Write below etc (user=%user.name command=%proc.cmdline container_id=%container.id
+    container_name=%container.name file=%fd.name)
+  priority: ERROR
+  tags: [filesystem, mitre_persistence]
+
+- rule: Package management process launched
+  desc: A package management process ran inside a container
+  condition: >
+    spawned_process and container and
+    (proc.name in (package_mgmt_binaries))
+  output: >
+    Package management process launched %evt.time,%container.id,%container.name,%user.name
+  priority: ERROR
+  tags: [process, mitre_persistence]

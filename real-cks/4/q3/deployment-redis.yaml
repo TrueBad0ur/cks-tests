@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-backend
+  namespace: team-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-backend
+  template:
+    metadata:
+      labels:
+        app: redis-backend
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        # SECURITY ISSUE: $SECRET_USERNAME and $SECRET_PASSWORD are echoed to stdout.
+        # Container logs are accessible to anyone with kubectl logs access.
+        # Credentials must never be printed to stdout/stderr.
+        command: ["sh", "-c"]
+        args:
+        - echo "Connecting as user $SECRET_USERNAME with password $SECRET_PASSWORD";
+          redis-server --requirepass "$SECRET_PASSWORD"
+        env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: password
+        ports:
+        - containerPort: 6379

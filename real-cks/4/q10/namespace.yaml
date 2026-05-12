@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-sedum
+  labels:
+    kubernetes.io/metadata.name: team-sedum
+    # This label enables Istio automatic sidecar injection for all pods in the namespace
+    istio-injection: enabled

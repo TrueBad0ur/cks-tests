@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-allow
+  namespace: team-iris
+spec:
+  # Apply to all pods in the namespace
+  endpointSelector: {}
+  ingress:
+  # Allow all ingress from same namespace
+  - fromEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: team-iris
+  egress:
+  # Allow all egress to same namespace
+  - toEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: team-iris
+  # Allow DNS egress (kube-dns in kube-system)
+  - toEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: kube-system
+        k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP

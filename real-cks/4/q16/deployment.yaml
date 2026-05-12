@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-verify
+  namespace: team-clover
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-verify
+  template:
+    metadata:
+      labels:
+        app: image-verify
+    spec:
+      containers:
+      - name: image-verify
+        # Updated to v2 after building and pushing the hardened Dockerfile
+        image: registry.local:5000/image-verify:v2
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false

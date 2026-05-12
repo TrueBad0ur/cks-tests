@@ -1,0 +1,11 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: <name>   # e.g. app-6c63ce3f@users-pro
+spec:
+  groups:
+  - system:authenticated
+  request: <base64-encoded-csr-content-no-newlines>
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth

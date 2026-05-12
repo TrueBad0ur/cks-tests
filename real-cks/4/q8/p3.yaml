@@ -1,0 +1,17 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: p3-database-mtls-messenger
+  namespace: team-iris
+spec:
+  # Apply to database pods
+  endpointSelector:
+    matchLabels:
+      type: database
+  # Layer 3 egress with mutual TLS (SPIFFE-based) required
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        type: messenger
+    authentication:
+      mode: "required"

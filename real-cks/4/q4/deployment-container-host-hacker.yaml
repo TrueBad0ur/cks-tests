@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-host-hacker
+  namespace: team-rose
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: container-host-hacker
+  template:
+    metadata:
+      labels:
+        app: container-host-hacker
+    spec:
+      containers:
+      - name: container-host-hacker
+        image: alpine:3.18
+        command: ["sh", "-c", "sleep infinity"]
+        volumeMounts:
+        - name: containerdata
+          mountPath: /run/containerd
+      volumes:
+      # hostPath volume: mounts the node's /run/containerd directory into the container.
+      # This violates PSS baseline: hostPath volumes are forbidden.
+      # After adding enforce=baseline label to the namespace, the ReplicaSet will fail
+      # to create new Pods for this Deployment with:
+      # Error: violates PodSecurity "baseline:latest": hostPath volumes (volume "containerdata")
+      - name: containerdata
+        hostPath:
+          path: /run/containerd
+          type: Directory

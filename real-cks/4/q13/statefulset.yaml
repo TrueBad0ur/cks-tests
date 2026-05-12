@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cert-signer
+  namespace: team-lilac
+spec:
+  serviceName: cert-signer
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cert-signer
+  template:
+    metadata:
+      labels:
+        app: cert-signer
+    spec:
+      serviceAccountName: cert-signer
+      containers:
+      - name: cert-signer
+        image: alpine/k8s:1.31.2
+        command: ["sh", "-c"]
+        args:
+        - |
+          while true; do
+            echo "Listing configmaps..."
+            kubectl get configmap
+            echo "Getting cert-signer-lock configmap..."
+            kubectl get configmap cert-signer-lock
+            echo "Listing CSRs..."
+            kubectl get csr
+            echo "Approving pending CSRs..."
+            kubectl certificate approve request1 2>/dev/null || true
+            echo "Sleeping 30s..."
+            sleep 30
+          done

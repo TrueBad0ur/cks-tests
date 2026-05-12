@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: p1-messenger-deny-database
+  namespace: team-iris
+spec:
+  # Apply to messenger pods
+  endpointSelector:
+    matchLabels:
+      type: messenger
+  # Layer 3 deny: block all egress from messenger to database
+  egressDeny:
+  - toEndpoints:
+    - matchLabels:
+        type: database

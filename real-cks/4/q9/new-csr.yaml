@@ -1,0 +1,14 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  # CN from the CSR file: app-c5a95f65@users-company
+  name: app-c5a95f65@users-company
+spec:
+  groups:
+  - system:authenticated
+  # Generated with: cat /opt/course/9/new.csr | base64 | tr -d "\n"
+  # Replace the placeholder below with the actual base64 output from the above command
+  request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KPGFjdHVhbCBiYXNlNjQgY29udGVudCBmcm9tIC9vcHQvY291cnNlLzkvbmV3LmNzcj4KLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0t
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth

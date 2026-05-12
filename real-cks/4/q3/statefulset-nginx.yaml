@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx-stateful
+  namespace: team-web
+spec:
+  serviceName: nginx-stateful
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-stateful
+  template:
+    metadata:
+      labels:
+        app: nginx-stateful
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 443
+        env:
+        # SECURITY ISSUE: hardcoded plaintext password in the manifest.
+        # Credentials must never be hardcoded — use Secrets with valueFrom.secretKeyRef.
+        - name: DB_HOST
+          value: "postgres.team-db.svc.cluster.local"
+        - name: DB_USER
+          value: "admin"
+        - name: Password
+          value: "MyDiReCtP@sSw0rd"
+        volumeMounts:
+        - name: nginx-data
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: nginx-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: local-storage
+      resources:
+        requests:
+          storage: 1Gi

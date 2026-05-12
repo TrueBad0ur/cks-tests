@@ -1,0 +1,53 @@
+# Egress NetworkPolicies for team-ivy-gateway
+# Restrict gateway-v1 and gateway-v2 to only egress to team-ivy-private namespace.
+# DNS (port 53) must be allowed or DNS resolution breaks.
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gateway-v1-egress
+  namespace: team-ivy-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app: gateway-v1
+  policyTypes:
+  - Egress
+  egress:
+  # Allow egress to pods in team-ivy-private namespace only
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: team-ivy-private
+  # Allow DNS resolution
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gateway-v2-egress
+  namespace: team-ivy-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app: gateway-v2
+  policyTypes:
+  - Egress
+  egress:
+  # Allow egress to pods in team-ivy-private namespace only
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: team-ivy-private
+  # Allow DNS resolution
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP

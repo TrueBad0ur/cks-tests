@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: p2-transmitter-deny-icmp-database
+  namespace: team-iris
+spec:
+  # Apply to transmitter pods
+  endpointSelector:
+    matchLabels:
+      type: transmitter
+  # Layer 4 deny: block ICMP Echo Request from transmitter to database only
+  egressDeny:
+  - toEndpoints:
+    - matchLabels:
+        type: database
+    icmps:
+    - fields:
+      - type: 8         # ICMP type 8 = EchoRequest for IPv4
+        family: IPv4
+      - type: EchoRequest  # named alias for IPv6
+        family: IPv6
