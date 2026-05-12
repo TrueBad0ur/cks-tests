@@ -1,0 +1,74 @@
+# REQUIREMENT: AppArmor must be enabled in the kernel.
+# Check with: cat /sys/module/apparmor/parameters/enabled
+# If "N" or file missing, this cluster does not support AppArmor.
+# The real CKS exam runs on Ubuntu nodes where AppArmor is enabled by default.
+#
+# Usage: apply this BEFORE q9/apparmor-deploy.yaml.
+# The DaemonSet init container writes the profile to /etc/apparmor.d/ on the node
+# and loads it with apparmor_parser. Only runs on nodes labeled security=apparmor.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apparmor-profile
+  namespace: default
+data:
+  very-secure: |
+    #include <tunables/global>
+
+    profile very-secure flags=(attach_disconnected) {
+      #include <abstractions/base>
+
+      file,
+
+      # Deny all file writes.
+      deny /** w,
+    }
+---
+# DaemonSet that loads the AppArmor profile on nodes with security=apparmor label.
+# The init container writes the profile to /etc/apparmor.d/ and loads it via apparmor_parser.
+# The main container just sleeps — its presence keeps the DaemonSet pod running.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: apparmor-loader
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: apparmor-loader
+  template:
+    metadata:
+      labels:
+        app: apparmor-loader
+    spec:
+      nodeSelector:
+        security: apparmor
+      initContainers:
+        - name: loader
+          image: ubuntu:22.04
+          command:
+            - sh
+            - -c
+            - |
+              apt-get update -qq && apt-get install -y -qq apparmor-utils 2>/dev/null
+              cp /profiles/very-secure /host-apparmor/very-secure
+              apparmor_parser -r -W /host-apparmor/very-secure && echo "AppArmor profile 'very-secure' loaded"
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: apparmor-profiles
+              mountPath: /host-apparmor
+            - name: profile-data
+              mountPath: /profiles
+      containers:
+        - name: sleep
+          image: busybox:latest
+          command: ["sh", "-c", "sleep infinity"]
+      volumes:
+        - name: apparmor-profiles
+          hostPath:
+            path: /etc/apparmor.d
+            type: DirectoryOrCreate
+        - name: profile-data
+          configMap:
+            name: apparmor-profile

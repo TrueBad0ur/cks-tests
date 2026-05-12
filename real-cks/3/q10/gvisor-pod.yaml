@@ -1,0 +1,20 @@
+# REQUIREMENT: gVisor (runsc) must be installed on the target node.
+# Install: https://gvisor.dev/docs/user_guide/install/
+# The real CKS exam nodes have gVisor pre-installed.
+# Without it the pod will fail: "no runtime for runsc is configured"
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: gvisor-test
+  name: gvisor-test
+  namespace: team-purple
+spec:
+  nodeName: worker1
+  runtimeClassName: gvisor
+  containers:
+  - image: nginx:1-alpine
+    name: gvisor-test
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always

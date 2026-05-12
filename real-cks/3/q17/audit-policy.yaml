@@ -1,0 +1,19 @@
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+# Log Secret resources at Metadata level
+- level: Metadata
+  resources:
+  - group: ""
+    resources: ["secrets"]
+
+# Log system:nodes group at RequestResponse level.
+# Field is "userGroups" (audit policy API), NOT "groups" (RBAC API) or "users".
+# Secrets rule MUST come first — system:nodes nodes read Secrets too.
+# If system:nodes rule were first, its Secret requests would log at RequestResponse
+# instead of Metadata, breaking the "Secret entries only at Metadata" requirement.
+- level: RequestResponse
+  userGroups: ["system:nodes"]
+
+# For everything else don't log anything
+- level: None

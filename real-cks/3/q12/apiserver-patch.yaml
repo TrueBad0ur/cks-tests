@@ -1,0 +1,36 @@
+# Patch for /etc/kubernetes/manifests/kube-apiserver.yaml
+#
+# 1. Add to spec.containers[0].command:
+#    - --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook
+#    - --admission-control-config-file=/etc/kubernetes/webhook/admission-config.yaml
+#
+# 2. Add to spec.containers[0].volumeMounts:
+#    - mountPath: /etc/kubernetes/webhook
+#      name: webhook-config
+#      readOnly: true
+#
+# 3. Add to spec.volumes:
+#    - name: webhook-config
+#      hostPath:
+#        path: /opt/course/12/webhook
+#        type: DirectoryOrCreate
+
+# Full snippets to copy-paste:
+
+# --- command flags ---
+command_flags: |
+  - --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook
+  - --admission-control-config-file=/etc/kubernetes/webhook/admission-config.yaml
+
+# --- volumeMount ---
+volume_mount: |
+  - mountPath: /etc/kubernetes/webhook
+    name: webhook-config
+    readOnly: true
+
+# --- volume ---
+volume: |
+  - name: webhook-config
+    hostPath:
+      path: /opt/course/12/webhook
+      type: DirectoryOrCreate

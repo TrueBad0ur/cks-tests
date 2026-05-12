@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-multiplex
+  namespace: team-coral
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      id: stream-multiplex
+  template:
+    metadata:
+      labels:
+        id: stream-multiplex
+      annotations:
+        token-lifetime: "1200"
+    spec:
+      serviceAccountName: stream-multiplex
+      automountServiceAccountToken: false
+      containers:
+        - image: httpd:2-alpine
+          name: httpd
+          resources:
+            requests:
+              cpu: 20m
+              memory: 20Mi
+          volumeMounts:
+            - name: token-volume
+              mountPath: /var/run/secrets/custom
+              readOnly: true
+      volumes:
+        - name: token-volume
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: 1200

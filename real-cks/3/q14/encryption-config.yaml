@@ -1,0 +1,11 @@
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets      # only secrets will be encrypted
+    providers:
+      - aesgcm:      # first provider: encrypted
+          keys:
+            - name: key1
+              secret: d0hhVGFTZUN1UmVQYVNzIQ==  # base64 of: wHaTaSeCuRePaSs!
+      - identity: {} # second provider: no encryption (allows reading non-encrypted secrets)

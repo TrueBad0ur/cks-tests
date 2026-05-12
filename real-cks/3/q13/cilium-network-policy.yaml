@@ -1,0 +1,37 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: default
+  namespace: metadata-access
+spec:
+  endpointSelector:
+    matchLabels: {}
+  egress:
+  # Allow egress to external IPs (internet).
+  # 0.0.0.0/0 in Cilium covers only external IPs — cluster-internal endpoints
+  # are identity-based and require toEndpoints rules, not toCIDR.
+  - toCIDR:
+      - 0.0.0.0/0
+
+  # Allow egress to Endpoints in the same Namespace.
+  # Must specify namespace label explicitly — Cilium toEndpoints is not
+  # automatically scoped to the policy namespace unlike native NetworkPolicy.
+  - toEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: metadata-access
+
+  # Allow egress to Endpoints in the kube-system Namespace (DNS, etc.)
+  - toEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: kube-system
+
+  egressDeny:
+  # Deny egress to metadata server IP on port 9055.
+  # egressDeny takes precedence over egress allow rules — even though
+  # 0.0.0.0/0 would otherwise allow this IP, egressDeny overrides it.
+  - toCIDR:
+      - 192.168.100.21/32
+    toPorts:
+      - ports:
+          - port: "9055"
+            protocol: TCP

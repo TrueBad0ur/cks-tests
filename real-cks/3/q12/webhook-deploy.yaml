@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-backend
+  namespace: team-white
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-backend
+  template:
+    metadata:
+      labels:
+        app: webhook-backend
+    spec:
+      containers:
+        - name: webhook
+          image: docker.io/truebad0ur/image-policy-webhook:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8443
+          env:
+            - name: PORT
+              value: "8443"
+            - name: BLOCKED_PATTERNS
+              value: "danger-danger"
+            - name: TLS_CERT
+              value: /tls/tls.crt
+            - name: TLS_KEY
+              value: /tls/tls.key
+          volumeMounts:
+            - mountPath: /tls
+              name: tls
+              readOnly: true
+          readinessProbe:
+            tcpSocket:
+              port: 8443
+            initialDelaySeconds: 3
+            periodSeconds: 5
+      volumes:
+        - name: tls
+          secret:
+            secretName: webhook-backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-backend
+  namespace: team-white
+spec:
+  selector:
+    app: webhook-backend
+  ports:
+    - port: 443
+      targetPort: 8443
